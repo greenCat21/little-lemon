@@ -58,7 +58,7 @@ fun Onboarding(clickRegister: (first: String, last: String, email: String) -> Un
     Scaffold(
         topBar = {
             Column(horizontalAlignment = Alignment.CenterHorizontally
-                , modifier = Modifier.fillMaxWidth()) {
+                , modifier = Modifier.fillMaxWidth().background(color = Color.White)) {
                 Image(
                     modifier = Modifier
                         .fillMaxHeight(fraction = 0.1f)
