@@ -1,32 +1,24 @@
 package ro.pyo.littlelemon.composables
 
-import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,10 +27,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,25 +43,29 @@ import ro.pyo.littlelemon.R
 @Composable
 fun Onboarding() {
     val context = LocalContext.current
-    var firstName by remember() {
+    var firstName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
     }
-    var lastName by remember() {
+    var lastName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
     }
-    var email by remember() {
+    var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
     }
+
 
     Column(
         modifier = Modifier
             .padding(0.dp)
             .background(Color.White)
-            .fillMaxSize(),
+            .fillMaxSize()
+           // .verticalScroll(rememberScrollState())
+                ,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
+
         Image(
             modifier = Modifier
                 .fillMaxHeight(fraction = 0.1f)
@@ -108,55 +102,44 @@ fun Onboarding() {
             fontFamily = FontFamily(Font(R.font.karla, FontWeight.ExtraBold)),
             color = Color.Black
         )
-        TextField(value = firstName,
+        val textFieldColor = TextFieldDefaults.outlinedTextFieldColors(
+            backgroundColor = Color.White,
+            textColor = Color.Black,
+            cursorColor = Color.Black,
+            focusedLabelColor = Color.Black,
+            unfocusedLabelColor = Color.LightGray,
+            placeholderColor = Color.Black,
+            unfocusedBorderColor = Color.LightGray,
+            focusedBorderColor = colorResource(id = R.color.primary_1)
+        )
+        val textInputModifier = Modifier
+            .padding(start = 15.dp, end = 15.dp, top = 20.dp, bottom = 10.dp)
+            /* .border(
+            width = 1.dp,
+            color = colorResource(id = R.color.primary_1),
+            shape = RoundedCornerShape(8.dp)
+        )*/
+            .padding(0.dp)
+            .fillMaxWidth()
+        OutlinedTextField(value = firstName,
             onValueChange = { it -> firstName = it },
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 40.dp, bottom = 10.dp)
-                .border(
-                    width = 1.dp,
-                    color = colorResource(id = R.color.primary_1),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Blue,
-                unfocusedIndicatorColor = Color.White
-            ),
+            modifier = textInputModifier,
+            shape = RoundedCornerShape(12.dp),
+            colors = textFieldColor,
             label = { Text(text = stringResource(id = R.string.first_name)) }
         )
-        TextField(value = lastName,
+        OutlinedTextField(value = lastName,
             onValueChange = { it -> lastName = it },
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 20.dp, bottom = 10.dp)
-                .border(
-                    width = 1.dp,
-                    color = colorResource(id = R.color.primary_1),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Blue,
-                unfocusedIndicatorColor = Color.White
-            ),
+            modifier = textInputModifier,
+            shape = RoundedCornerShape(12.dp),
+            colors = textFieldColor,
             label = { Text(text = stringResource(id = R.string.last_name)) }
         )
-        TextField(value = email,
+        OutlinedTextField(value = email,
             onValueChange = { it -> email = it },
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, top = 20.dp, bottom = 10.dp)
-                .border(
-                    width = 1.dp,
-                    color = colorResource(id = R.color.primary_1),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .fillMaxWidth(),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White,
-                focusedIndicatorColor = Color.Blue,
-                unfocusedIndicatorColor = Color.White
-            ),
+            modifier = textInputModifier,
+            shape = RoundedCornerShape(12.dp),
+            colors = textFieldColor,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             label = { Text(text = stringResource(id = R.string.email)) }
         )
@@ -164,7 +147,6 @@ fun Onboarding() {
             Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom
         ) {
-
             Button(
                 onClick = { },
                 colors = ButtonDefaults.buttonColors(
