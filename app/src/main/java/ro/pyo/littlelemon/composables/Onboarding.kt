@@ -1,5 +1,6 @@
 package ro.pyo.littlelemon.composables
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,10 +40,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ro.pyo.littlelemon.R
+import ro.pyo.littlelemon.data.UserData
+
 
 @Composable
-fun Onboarding() {
+fun Onboarding(clickRegister:(first: String,last:String,email:String)-> Unit) {
     val context = LocalContext.current
     var firstName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
@@ -53,14 +61,18 @@ fun Onboarding() {
         mutableStateOf(TextFieldValue(""))
     }
 
+    var openAlert by remember {
+        mutableStateOf(false)
+    }
+
 
     Column(
         modifier = Modifier
             .padding(0.dp)
             .background(Color.White)
             .fillMaxSize()
-           // .verticalScroll(rememberScrollState())
-                ,
+        // .verticalScroll(rememberScrollState())
+        ,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -148,7 +160,9 @@ fun Onboarding() {
             verticalArrangement = Arrangement.Bottom
         ) {
             Button(
-                onClick = { },
+                onClick = {
+                    clickRegister(firstName.text,lastName.text,email.text)
+                },
                 colors = ButtonDefaults.buttonColors(
                     colorResource(id = R.color.primary_2)
                 ),
@@ -164,11 +178,12 @@ fun Onboarding() {
             }
         }
     }
-
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
 fun OnboardingPreview() {
-    Onboarding()
+    //Onboarding()
 }
