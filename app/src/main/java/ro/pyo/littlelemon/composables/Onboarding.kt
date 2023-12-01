@@ -1,5 +1,8 @@
 package ro.pyo.littlelemon.composables
 
+import android.content.SharedPreferences
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,13 +44,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.navigation.NavHostController
+import ro.pyo.littlelemon.Home
 import ro.pyo.littlelemon.R
+import ro.pyo.littlelemon.data.SharedPrefsKeys
 
 
 @Composable
-fun Onboarding(navController: NavHostController, clickRegister: (first: String, last: String, email: String) -> Unit) {
+fun Onboarding(
+    navController: NavHostController,
+    //clickRegister: (first: String, last: String, email: String) -> Unit,
+    sharedPreferencesImport: SharedPreferences
+) {
 
+    val context = LocalContext.current
     var firstName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
     }
@@ -56,10 +68,15 @@ fun Onboarding(navController: NavHostController, clickRegister: (first: String, 
     var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
     }
+
     Scaffold(
         topBar = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally
-                , modifier = Modifier.fillMaxWidth().background(color = Color.White)) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color.White)
+            ) {
                 Image(
                     modifier = Modifier
                         .fillMaxHeight(fraction = 0.1f)
@@ -74,7 +91,27 @@ fun Onboarding(navController: NavHostController, clickRegister: (first: String, 
         bottomBar = {
             Button(
                 onClick = {
-                    clickRegister(firstName.text, lastName.text, email.text)
+                    if (firstName.text.isNotBlank()
+                        && lastName.text.isNotBlank()
+                        && email.text.isNotBlank())
+                    {
+                        sharedPreferencesImport.edit(commit = true) {
+                            putString(SharedPrefsKeys.firstName, firstName.text)
+                            putString(SharedPrefsKeys.lastName, lastName.text)
+                            putString(SharedPrefsKeys.email, email.text)
+                        }
+                        Log.d("onboard","shared prefs write : ${firstName.text} , ${ lastName.text}, ${email.text}")
+                        navController.navigate(Home.route)
+                        {
+                            popUpTo(0)
+                        }
+
+                    }
+                    else
+                    {
+                        Toast.makeText(context,"Registration unsuccessful. Please enter all data.",Toast.LENGTH_SHORT).show()
+                    }
+
                 },
                 colors = ButtonDefaults.buttonColors(
                     colorResource(id = R.color.primary_2)
@@ -96,8 +133,7 @@ fun Onboarding(navController: NavHostController, clickRegister: (first: String, 
                 .padding(contentPadding.calculateTopPadding())
                 .background(Color.White)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-            ,
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
 
