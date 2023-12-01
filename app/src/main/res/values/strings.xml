@@ -7,6 +7,6 @@
     <string name="last_name">Last Name</string>
     <string name="email">Email address</string>
     <string name="register">Register</string>
-
+    <string name="logout">Logout</string>
 
 </resources>

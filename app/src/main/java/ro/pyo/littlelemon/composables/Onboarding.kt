@@ -58,6 +58,12 @@ fun Onboarding(
     sharedPreferencesImport: SharedPreferences
 ) {
 
+    sharedPreferencesImport.edit(commit = true) {
+        putString(SharedPrefsKeys.firstName, "")
+        putString(SharedPrefsKeys.lastName, "")
+        putString(SharedPrefsKeys.email, "")
+    }
+
     val context = LocalContext.current
     var firstName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
@@ -147,7 +153,7 @@ fun Onboarding(
                     .fillMaxWidth()
                     .padding(vertical = 40.dp),
                 text = stringResource(id = R.string.on_board_title),
-                fontSize = 24.sp,
+                fontSize = 28.sp,
                 textAlign = TextAlign.Center,
                 fontFamily = FontFamily(Font(R.font.karla, FontWeight.ExtraBold)),
                 color = Color.White
@@ -161,7 +167,7 @@ fun Onboarding(
                     .fillMaxWidth()
                     .padding(vertical = 40.dp, horizontal = 20.dp),
                 text = stringResource(id = R.string.on_board_pers_info),
-                fontSize = 20.sp,
+                fontSize = 24.sp,
                 textAlign = TextAlign.Start,
                 fontFamily = FontFamily(Font(R.font.karla, FontWeight.ExtraBold)),
                 color = Color.Black

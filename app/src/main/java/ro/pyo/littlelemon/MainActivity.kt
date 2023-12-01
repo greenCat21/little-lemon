@@ -17,7 +17,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ro.pyo.littlelemon.composables.Onboarding
 import ro.pyo.littlelemon.data.SharedPrefsKeys
+import ro.pyo.littlelemon.data.UserData
 import ro.pyo.littlelemon.ui.theme.LittleLemonTheme
+
 class MainActivity : ComponentActivity() {
 
     private val sharedPreferences by lazy {
@@ -78,12 +80,11 @@ class MainActivity : ComponentActivity() {
                 emailLiveData.value = sharedPreferences.getString(key, "")
             }
 
-            Log.d("main activity:","shared prefs listener : ${firstNameLiveData.value} , ${lastNameLiveData.value}, ${emailLiveData.value}")
+            Log.d(
+                "main activity:",
+                "shared prefs listener : ${firstNameLiveData.value} , ${lastNameLiveData.value}, ${emailLiveData.value}"
+            )
         }
-
-
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,15 +112,25 @@ class MainActivity : ComponentActivity() {
             startDestination = if (firstNameLiveData.value!!.isNotBlank()) Home.route else Onboard.route
         ) {
             composable(Onboard.route) {
-                Onboarding(navController = navController
+                Onboarding(
+                    navController = navController
                     //, registerClick
-                    , sharedPreferences)
+                    , sharedPreferences
+                )
             }
             composable(Home.route) {
                 HomeScreen(navController = navController)
             }
             composable(Profile.route) {
-                ProfileScreen(navController = navController)
+                ProfileScreen(
+                    navController = navController,
+                    UserData(
+                        "id",
+                        firstNameLiveData.value!!,
+                        lastNameLiveData.value!!,
+                        emailLiveData.value!!
+                    )
+                )
             }
 
         }
