@@ -119,7 +119,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private suspend fun getMenu() {
-        val response:MenuItemNetwork =
+        val response:MenuNetworkData =
             client.get(JsonUrl.url)
                 .body()
         //return listOf()

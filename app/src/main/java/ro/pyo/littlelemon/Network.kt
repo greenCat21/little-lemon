@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 
 @Serializable
-class MenuNetworkData(
+class  MenuItemNetwork(
     @SerializedName("id") var id: Int? = null,
     @SerializedName("title") var title: String? = null,
     @SerializedName("description") var description: String? = null,
@@ -16,8 +16,8 @@ class MenuNetworkData(
 )
 
 @Serializable
-data class MenuItemNetwork(
-    @SerializedName("menu") var menu: ArrayList<MenuNetworkData> = arrayListOf()
+data class MenuNetworkData(
+    @SerializedName("menu") var menu: ArrayList<MenuItemNetwork> = arrayListOf()
 )
 
 class JsonUrl() {
