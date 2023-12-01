@@ -1,4 +1,4 @@
-package ro.pyo.littlelemon.composables
+package ro.pyo.littlelemon
 
 import android.content.SharedPreferences
 import android.util.Log
@@ -46,9 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import androidx.navigation.NavHostController
-import ro.pyo.littlelemon.Home
-import ro.pyo.littlelemon.R
-import ro.pyo.littlelemon.data.SharedPrefsKeys
 
 
 @Composable

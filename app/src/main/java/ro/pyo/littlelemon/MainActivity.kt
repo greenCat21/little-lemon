@@ -12,11 +12,18 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import ro.pyo.littlelemon.composables.Onboarding
-import ro.pyo.littlelemon.data.SharedPrefsKeys
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.http.ContentType
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.launch
 import ro.pyo.littlelemon.data.UserData
 import ro.pyo.littlelemon.ui.theme.LittleLemonTheme
 
@@ -86,7 +93,11 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-
+    private val client = HttpClient(Android) {
+        install(ContentNegotiation) {
+            json(contentType = ContentType("text", "plain"))
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -96,10 +107,26 @@ class MainActivity : ComponentActivity() {
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPrefsListener)
 
+        lifecycleScope.launch {
+            getMenu()
+        }
+
         setContent {
             LittleLemonTheme {
                 AppScreen()
             }
+        }
+    }
+
+    private suspend fun getMenu() {
+        val response:MenuItemNetwork =
+            client.get(JsonUrl.url)
+                .body()
+        //return listOf()
+        //Log.d("Main activity", "network data: $response")
+        for(menu in response.menu)
+        {
+            Log.d("little lemon main","menu: ${menu.title}")
         }
     }
 

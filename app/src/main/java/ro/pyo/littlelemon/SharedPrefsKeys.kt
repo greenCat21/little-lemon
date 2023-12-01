@@ -1,4 +1,4 @@
-package ro.pyo.littlelemon.data
+package ro.pyo.littlelemon
 
 class SharedPrefsKeys {
     companion object {
