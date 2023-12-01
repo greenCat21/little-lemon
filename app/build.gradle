@@ -73,4 +73,5 @@ dependencies {
     // To support LiveData in Compose
     implementation 'androidx.compose.runtime:runtime-livedata:1.5.4'
     kapt "android.arch.persistence.room:compiler:1.1.1"
+    implementation "androidx.navigation:navigation-compose:2.7.5"
 }

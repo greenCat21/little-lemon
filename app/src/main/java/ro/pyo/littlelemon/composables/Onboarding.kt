@@ -40,11 +40,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import ro.pyo.littlelemon.R
 
 
 @Composable
-fun Onboarding(clickRegister: (first: String, last: String, email: String) -> Unit) {
+fun Onboarding(navController: NavHostController, clickRegister: (first: String, last: String, email: String) -> Unit) {
 
     var firstName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))

@@ -6,14 +6,21 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,7 +44,35 @@ class MainActivity : ComponentActivity() {
                 onboardingDoneLiveData.value = sharedPreferences.getBoolean(key, false)
             }
         }
+    private val registerClick: (first: String, last: String, email: String) -> Unit =
+        fun(first: String, last: String, email: String) {
+            if (first.isNotEmpty() && last.isNotEmpty() && email.isNotEmpty()) {
+                val user = UserData(
+                    id = UUID.randomUUID().toString(),
+                    email = email,
+                    firstName = first,
+                    lastName = last
+                )
+                Log.d("DB----", "this is the user: $user")
+                val database = UserDatabase.getDatabase(applicationContext)
 
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        database.userDao().saveUser(user)
+                        Log.d("DB----", "Insert into database")
+                        sharedPreferences.edit(commit = true) {
+                            putBoolean(ONBOARD_KEY, true)
+                        }
+                    }
+                }
+            } else {
+                Toast.makeText(
+                    this,
+                    "Please fill all the fields",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onboardingDoneLiveData.value = sharedPreferences.getBoolean(ONBOARD_KEY, false)
@@ -45,51 +80,49 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             LittleLemonTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    val onboard = onboardingDoneLiveData.observeAsState(false)
-                    if (!onboard.value) {
-                        var registerClick: (first: String, last: String, email: String) -> Unit =
-                            fun(first: String, last: String, email: String) {
-                                if (first.isNotEmpty() && last.isNotEmpty() && email.isNotEmpty()) {
-                                    val user = UserData(
-                                        id = UUID.randomUUID().toString(),
-                                        email = email,
-                                        firstName = first,
-                                        lastName = last
-                                    )
-                                    Log.d("DB----", "this is the user: $user")
-                                    val database = UserDatabase.getDatabase(applicationContext)
-
-                                    lifecycleScope.launch {
-                                        withContext(Dispatchers.IO) {
-                                            database.userDao().saveUser(user)
-                                            Log.d("DB----", "Insert into database")
-                                            sharedPreferences.edit(commit = true) {
-                                                putBoolean(ONBOARD_KEY, true)
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    Toast.makeText(
-                                        this,
-                                        "Please fill all the fields",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        Onboarding(registerClick)
-                    }
-                }
+                AppScreen()
             }
         }
     }
+    @Composable
+    fun MyNavigation() {
+        val navController = rememberNavController()
+        val onboard = onboardingDoneLiveData.observeAsState(false)
+        NavHost(
+            navController = navController,
+            startDestination =if(onboard.value) Home.route else Onboard.route
+        ) {
+            composable(Onboard.route) {
+                Onboarding(navController = navController,registerClick)
+            }
+            composable(Home.route) {
+                HomeScreen(navController = navController)
+            }
+            composable(Profile.route){
+                ProfileScreen(navController = navController)
+            }
 
-
+        }
+    }
+    @Composable
+    private fun AppScreen() {
+        Scaffold(
+            topBar = {
+                ;//TopAppBar()
+            }
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
+                MyNavigation()
+            }
+        }
+    }
 }
+
+
 
 
 
