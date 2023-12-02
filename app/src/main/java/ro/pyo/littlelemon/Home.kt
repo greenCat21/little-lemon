@@ -46,6 +46,98 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 @Composable
+fun TopAppBar(navController: NavHostController) {
+    Box(
+        //horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.White)
+    ) {
+        Image(
+            modifier = Modifier
+                .fillMaxHeight(fraction = 0.1f)
+                .padding(vertical = 20.dp)
+                .align(alignment = Alignment.Center),
+            painter = painterResource(id = R.drawable.logo),
+
+            contentScale = ContentScale.FillHeight,
+            contentDescription = stringResource(id = R.string.logo_description)
+        )
+        Image(
+            modifier = Modifier
+                .fillMaxHeight(fraction = 0.1f)
+                .padding(vertical = 20.dp, horizontal = 10.dp)
+                .align(alignment = Alignment.CenterEnd)
+                .clickable { navController.navigate(Profile.route) },
+            painter = painterResource(id = R.drawable.profile),
+            contentScale = ContentScale.FillHeight,
+            contentDescription = stringResource(id = R.string.logo_description)
+        )
+    }
+}
+
+@Composable
+fun HeroSection() {
+    Column(Modifier.background(colorResource(id = R.color.primary_1))) {
+        Row()
+        {
+            Text(
+                modifier = Modifier
+                    //.padding(top = 5.dp, bottom = 20.dp, start = 10.dp, end = 10.dp)
+                    //.border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
+                    .padding(top = 10.dp, bottom = 0.dp, start = 10.dp, end = 10.dp)
+                    .fillMaxWidth(),
+                text = stringResource(id = R.string.restaurant_name),
+                fontSize = 46.sp,
+                textAlign = TextAlign.Start,
+                fontFamily = FontFamily(Font(R.font.markazi_text, FontWeight.ExtraBold)),
+                color = colorResource(id = R.color.primary_2)
+            )
+        }
+        Row() {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(.65f)
+                    .wrapContentHeight()
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 0.dp, bottom = 1.dp, start = 10.dp, end = 10.dp)
+                        .fillMaxWidth(),
+                    text = stringResource(id = R.string.city),
+                    fontSize = 24.sp,
+                    textAlign = TextAlign.Start,
+                    fontFamily = FontFamily(Font(R.font.karla, FontWeight.Bold)),
+                    color = Color.White
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(top = 20.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+                        .fillMaxWidth(),
+                    text = stringResource(id = R.string.description),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Start,
+                    fontFamily = FontFamily(Font(R.font.karla, FontWeight.Normal)),
+                    color = Color.White
+                )
+            }
+            Image(
+                modifier = Modifier
+                    //.fillMaxHeight(fraction = 0.1f)
+                    .height(150.dp)
+                    .padding(start = 0.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
+                    //.align(alignment = Alignment)
+                    .clip(RoundedCornerShape(12.dp)),
+                painter = painterResource(id = R.drawable.hero_image),
+                contentScale = ContentScale.Crop,
+                contentDescription = stringResource(id = R.string.logo_description)
+            )
+        }
+
+    }
+}
+
+@Composable
 fun HomeScreen(navController: NavHostController) {
 
     var search by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -56,92 +148,13 @@ fun HomeScreen(navController: NavHostController) {
         modifier = Modifier.fillMaxSize(),
         backgroundColor = Color.White,
         topBar = {
-            Box(
-                //horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.White)
-            ) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxHeight(fraction = 0.1f)
-                        .padding(vertical = 20.dp)
-                        .align(alignment = Alignment.Center),
-                    painter = painterResource(id = R.drawable.logo),
-
-                    contentScale = ContentScale.FillHeight,
-                    contentDescription = stringResource(id = R.string.logo_description)
-                )
-                Image(
-                    modifier = Modifier
-                        .fillMaxHeight(fraction = 0.1f)
-                        .padding(vertical = 20.dp, horizontal = 10.dp)
-                        .align(alignment = Alignment.CenterEnd)
-                        .clickable { navController.navigate(Profile.route) },
-                    painter = painterResource(id = R.drawable.profile),
-                    contentScale = ContentScale.FillHeight,
-                    contentDescription = stringResource(id = R.string.logo_description)
-                )
-            }
+            TopAppBar(navController)
         }
     )
-    {
-        val padding = it
-        Column(Modifier.background(colorResource(id = R.color.primary_1))) {
-            Row()
-            {
-                Text(
-                    modifier = Modifier
-                        //.padding(top = 5.dp, bottom = 20.dp, start = 10.dp, end = 10.dp)
-                        //.border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
-                        .padding(top = 10.dp, bottom = 0.dp, start = 10.dp, end = 10.dp)
-                        .fillMaxWidth(),
-                    text = stringResource(id = R.string.restaurant_name),
-                    fontSize = 46.sp,
-                    textAlign = TextAlign.Start,
-                    fontFamily = FontFamily(Font(R.font.markazi_text, FontWeight.ExtraBold)),
-                    color = colorResource(id = R.color.primary_2)
-                )
-            }
-            Row() {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(.65f)
-                        .wrapContentHeight()
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(top = 0.dp, bottom = 1.dp, start = 10.dp, end = 10.dp)
-                            .fillMaxWidth(),
-                        text = stringResource(id = R.string.city),
-                        fontSize = 24.sp,
-                        textAlign = TextAlign.Start,
-                        fontFamily = FontFamily(Font(R.font.karla, FontWeight.Bold)),
-                        color = Color.White
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(top = 20.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
-                            .fillMaxWidth(),
-                        text = stringResource(id = R.string.description),
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start,
-                        fontFamily = FontFamily(Font(R.font.karla, FontWeight.Normal)),
-                        color = Color.White
-                    )
-                }
-                Image(
-                    modifier = Modifier
-                        //.fillMaxHeight(fraction = 0.1f)
-                        .height(150.dp)
-                        .padding(start = 0.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
-                        //.align(alignment = Alignment)
-                        .clip(RoundedCornerShape(12.dp)),
-                    painter = painterResource(id = R.drawable.hero_image),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = stringResource(id = R.string.logo_description)
-                )
-            }
+    { paddingValues ->
+        val padding = paddingValues
+        Column() {
+            HeroSection()
             val textFieldColor = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.White,
                 textColor = Color.Black,
@@ -152,29 +165,26 @@ fun HomeScreen(navController: NavHostController) {
                 leadingIconColor = Color.Black,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
-                //unfocusedBorderColor = Color.LightGray,
-                //focusedBorderColor = colorResource(id = R.color.primary_1)
             )
             val textInputModifier = Modifier
                 .padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 15.dp)
-                /* .border(
-                width = 1.dp,
-                color = colorResource(id = R.color.primary_1),
-                shape = RoundedCornerShape(8.dp)
-            )*/
                 .padding(0.dp)
                 .fillMaxWidth()
-            TextField(value = search,
-                onValueChange = { search = it },
-                modifier = textInputModifier,
-                shape = RoundedCornerShape(12.dp),
-                colors = textFieldColor,
-                label = { Text(text = stringResource(id = R.string.search)) },
-                leadingIcon = {
-                    Icon(Icons.Rounded.Search , contentDescription = stringResource(id = R.string.search))
-                }
-            )
-
+            Box(Modifier.background(colorResource(id = R.color.primary_1))) {
+                TextField(value = search,
+                    onValueChange = { search = it },
+                    modifier = textInputModifier,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = textFieldColor,
+                    label = { Text(text = stringResource(id = R.string.search)) },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Rounded.Search,
+                            contentDescription = stringResource(id = R.string.search)
+                        )
+                    }
+                )
+            }
         }
     }
 }
