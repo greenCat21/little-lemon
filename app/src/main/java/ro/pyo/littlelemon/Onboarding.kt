@@ -55,12 +55,6 @@ fun Onboarding(
     sharedPreferencesImport: SharedPreferences
 ) {
 
-    sharedPreferencesImport.edit(commit = true) {
-        putString(SharedPrefsKeys.firstName, "")
-        putString(SharedPrefsKeys.lastName, "")
-        putString(SharedPrefsKeys.email, "")
-    }
-
     val context = LocalContext.current
     var firstName by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
@@ -219,5 +213,5 @@ fun Onboarding(
 @Preview(showBackground = true)
 @Composable
 fun OnboardingPreview() {
-    //OnBoardingScaffold()
+    //Onboarding(rememberNavController(),)
 }

@@ -1,21 +1,186 @@
 package ro.pyo.littlelemon
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
-    Scaffold(modifier = Modifier.fillMaxSize(), backgroundColor = Color.White) { padding ->
-        Text(
-            modifier = Modifier.padding(padding.calculateTopPadding())
-            , text = "home screen"
-            , color = Color.Black
-        )
+
+    var search by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(""))
     }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        backgroundColor = Color.White,
+        topBar = {
+            Box(
+                //horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color.White)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxHeight(fraction = 0.1f)
+                        .padding(vertical = 20.dp)
+                        .align(alignment = Alignment.Center),
+                    painter = painterResource(id = R.drawable.logo),
+
+                    contentScale = ContentScale.FillHeight,
+                    contentDescription = stringResource(id = R.string.logo_description)
+                )
+                Image(
+                    modifier = Modifier
+                        .fillMaxHeight(fraction = 0.1f)
+                        .padding(vertical = 20.dp, horizontal = 10.dp)
+                        .align(alignment = Alignment.CenterEnd)
+                        .clickable { navController.navigate(Profile.route) },
+                    painter = painterResource(id = R.drawable.profile),
+                    contentScale = ContentScale.FillHeight,
+                    contentDescription = stringResource(id = R.string.logo_description)
+                )
+            }
+        }
+    )
+    {
+        val padding = it
+        Column(Modifier.background(colorResource(id = R.color.primary_1))) {
+            Row()
+            {
+                Text(
+                    modifier = Modifier
+                        //.padding(top = 5.dp, bottom = 20.dp, start = 10.dp, end = 10.dp)
+                        //.border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
+                        .padding(top = 10.dp, bottom = 0.dp, start = 10.dp, end = 10.dp)
+                        .fillMaxWidth(),
+                    text = stringResource(id = R.string.restaurant_name),
+                    fontSize = 46.sp,
+                    textAlign = TextAlign.Start,
+                    fontFamily = FontFamily(Font(R.font.markazi_text, FontWeight.ExtraBold)),
+                    color = colorResource(id = R.color.primary_2)
+                )
+            }
+            Row() {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(.65f)
+                        .wrapContentHeight()
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 0.dp, bottom = 1.dp, start = 10.dp, end = 10.dp)
+                            .fillMaxWidth(),
+                        text = stringResource(id = R.string.city),
+                        fontSize = 24.sp,
+                        textAlign = TextAlign.Start,
+                        fontFamily = FontFamily(Font(R.font.karla, FontWeight.Bold)),
+                        color = Color.White
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 20.dp, bottom = 10.dp, start = 10.dp, end = 10.dp)
+                            .fillMaxWidth(),
+                        text = stringResource(id = R.string.description),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        fontFamily = FontFamily(Font(R.font.karla, FontWeight.Normal)),
+                        color = Color.White
+                    )
+                }
+                Image(
+                    modifier = Modifier
+                        //.fillMaxHeight(fraction = 0.1f)
+                        .height(150.dp)
+                        .padding(start = 0.dp, end = 10.dp, top = 0.dp, bottom = 10.dp)
+                        //.align(alignment = Alignment)
+                        .clip(RoundedCornerShape(12.dp)),
+                    painter = painterResource(id = R.drawable.hero_image),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = stringResource(id = R.string.logo_description)
+                )
+            }
+            val textFieldColor = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.White,
+                textColor = Color.Black,
+                cursorColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.LightGray,
+                placeholderColor = Color.Black,
+                leadingIconColor = Color.Black,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+                //unfocusedBorderColor = Color.LightGray,
+                //focusedBorderColor = colorResource(id = R.color.primary_1)
+            )
+            val textInputModifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 15.dp)
+                /* .border(
+                width = 1.dp,
+                color = colorResource(id = R.color.primary_1),
+                shape = RoundedCornerShape(8.dp)
+            )*/
+                .padding(0.dp)
+                .fillMaxWidth()
+            TextField(value = search,
+                onValueChange = { search = it },
+                modifier = textInputModifier,
+                shape = RoundedCornerShape(12.dp),
+                colors = textFieldColor,
+                label = { Text(text = stringResource(id = R.string.search)) },
+                leadingIcon = {
+                    Icon(Icons.Rounded.Search , contentDescription = stringResource(id = R.string.search))
+                }
+            )
+
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(navController = rememberNavController())
 }

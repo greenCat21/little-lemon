@@ -1,5 +1,6 @@
 package ro.pyo.littlelemon
 
+import android.content.SharedPreferences
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,15 +33,37 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    firstName:String,
-    lastName:String,
-    email:String
+    sharedPreferencesImport: SharedPreferences
 ) {
+    val firstNameLiveData = MutableLiveData<String>()
+    val lastNameLiveData = MutableLiveData<String>()
+    val emailLiveData = MutableLiveData<String>()
+
+    val sharedPrefsListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == SharedPrefsKeys.firstName) {
+                firstNameLiveData.value = sharedPreferences.getString(key, "")
+            }
+            if (key == SharedPrefsKeys.lastName) {
+                lastNameLiveData.value = sharedPreferences.getString(key, "")
+            }
+            if (key == SharedPrefsKeys.email) {
+                emailLiveData.value = sharedPreferences.getString(key, "")
+            }
+        }
+
+    firstNameLiveData.value = sharedPreferencesImport.getString(SharedPrefsKeys.firstName, "")
+    lastNameLiveData.value = sharedPreferencesImport.getString(SharedPrefsKeys.lastName, "")
+    emailLiveData.value = sharedPreferencesImport.getString(SharedPrefsKeys.email, "")
+
+    sharedPreferencesImport.registerOnSharedPreferenceChangeListener(sharedPrefsListener)
     Scaffold(
         topBar = {
             Column(
@@ -63,6 +86,11 @@ fun ProfileScreen(
         bottomBar = {
             Button(
                 onClick = {
+                    sharedPreferencesImport.edit(commit = true) {
+                        putString(SharedPrefsKeys.firstName, "")
+                        putString(SharedPrefsKeys.lastName, "")
+                        putString(SharedPrefsKeys.email, "")
+                    }
                     navController.navigate(Onboard.route){
                         popUpTo(0)
                     }
@@ -106,9 +134,10 @@ fun ProfileScreen(
                 fontFamily = FontFamily(Font(R.font.karla, FontWeight.ExtraBold)),
                 color = Color.Black
             )
-            UserFields(stringResource(id = R.string.first_name), userInfo = firstName)
-            UserFields(stringResource(id = R.string.last_name), userInfo = lastName)
-            UserFields(stringResource(id = R.string.email), userInfo = email)
+
+            UserFields(stringResource(id = R.string.first_name), userInfo = firstNameLiveData.value!!)
+            UserFields(stringResource(id = R.string.last_name), userInfo = lastNameLiveData.value!!)
+            UserFields(stringResource(id = R.string.email), userInfo = emailLiveData.value!!)
         }
     }
 }
@@ -148,5 +177,5 @@ fun UserFields(caption: String, userInfo: String) {
 @Preview
 @Composable
 fun ProfileScreenPreview() {
-    //ProfileScreen(UserData("000", "mail@domain.com", "First", "Last"));
+    //ProfileScreen(rememberNavController(), "mail@domain.com", "First", "Last");
 }
