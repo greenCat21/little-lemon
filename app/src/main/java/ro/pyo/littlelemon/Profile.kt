@@ -33,12 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import ro.pyo.littlelemon.data.UserData
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    user: UserData
+    firstName:String,
+    lastName:String,
+    email:String
 ) {
     Scaffold(
         topBar = {
@@ -105,9 +106,9 @@ fun ProfileScreen(
                 fontFamily = FontFamily(Font(R.font.karla, FontWeight.ExtraBold)),
                 color = Color.Black
             )
-            UserFields(stringResource(id = R.string.first_name), userInfo = user.firstName)
-            UserFields(stringResource(id = R.string.last_name), userInfo = user.lastName)
-            UserFields(stringResource(id = R.string.email), userInfo = user.email)
+            UserFields(stringResource(id = R.string.first_name), userInfo = firstName)
+            UserFields(stringResource(id = R.string.last_name), userInfo = lastName)
+            UserFields(stringResource(id = R.string.email), userInfo = email)
         }
     }
 }

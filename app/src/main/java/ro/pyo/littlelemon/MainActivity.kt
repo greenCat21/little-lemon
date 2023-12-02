@@ -23,8 +23,9 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ro.pyo.littlelemon.data.UserData
+import kotlinx.coroutines.withContext
 import ro.pyo.littlelemon.ui.theme.LittleLemonTheme
 
 class MainActivity : ComponentActivity() {
@@ -98,6 +99,7 @@ class MainActivity : ComponentActivity() {
             json(contentType = ContentType("text", "plain"))
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -108,7 +110,17 @@ class MainActivity : ComponentActivity() {
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPrefsListener)
 
         lifecycleScope.launch {
-            getMenu()
+            val menus = getMenu()
+            val database = MenuDatabase.getDatabase(applicationContext)
+
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    for(menu in menus) {
+                        database.menuDao().insert(MenuNetworkToRoom(menu))
+                        Log.d("main activity", "Insert into database ${menu.title}")
+                    }
+                }
+            }
         }
 
         setContent {
@@ -118,16 +130,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private suspend fun getMenu() {
-        val response:MenuNetworkData =
+    private suspend fun getMenu():List<MenuItemNetwork> {
+        val response: MenuNetworkData =
             client.get(JsonUrl.url)
                 .body()
         //return listOf()
         //Log.d("Main activity", "network data: $response")
-        for(menu in response.menu)
-        {
-            Log.d("little lemon main","menu: ${menu.title}")
+        for (menu in response.menu) {
+            Log.d("little lemon main", "menu: ${menu.title}")
         }
+        return response.menu
     }
 
     @Composable
@@ -151,15 +163,11 @@ class MainActivity : ComponentActivity() {
             composable(Profile.route) {
                 ProfileScreen(
                     navController = navController,
-                    UserData(
-                        "id",
-                        firstNameLiveData.value!!,
-                        lastNameLiveData.value!!,
-                        emailLiveData.value!!
-                    )
+                    firstNameLiveData.value!!,
+                    lastNameLiveData.value!!,
+                    emailLiveData.value!!
                 )
             }
-
         }
     }
 

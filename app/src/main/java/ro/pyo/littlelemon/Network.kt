@@ -6,13 +6,12 @@ import com.google.gson.annotations.SerializedName
 
 @Serializable
 class  MenuItemNetwork(
-    @SerializedName("id") var id: Int? = null,
-    @SerializedName("title") var title: String? = null,
-    @SerializedName("description") var description: String? = null,
-    @SerializedName("price") var price: String? = null,
-    @SerializedName("image") var image: String? = null,
-    @SerializedName("category") var category: String? = null
-
+    @SerializedName("id") var id: Int,
+    @SerializedName("title") var title: String,
+    @SerializedName("description") var description: String,
+    @SerializedName("price") var price: String,
+    @SerializedName("image") var image: String,
+    @SerializedName("category") var category: String
 )
 
 @Serializable
