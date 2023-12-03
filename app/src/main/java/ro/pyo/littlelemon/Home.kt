@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
@@ -105,7 +106,7 @@ fun HeroSection() {
                 color = colorResource(id = R.color.primary_2)
             )
         }
-        Row() {
+        Row {
             Column(
                 modifier = Modifier
                     .fillMaxWidth(.65f)
@@ -149,10 +150,23 @@ fun HeroSection() {
 }
 
 @Composable
-fun MenuCategory(category: String) {
+fun MenuCategory(category: String, active: String, onClick: (String) -> Unit) {
+
+    val buttonColor: ButtonColors = if (category == active) {
+        ButtonDefaults.buttonColors(
+            backgroundColor = colorResource(id = R.color.primary_1),
+            contentColor = colorResource(id = R.color.primary_2)
+        )
+    } else {
+        ButtonDefaults.buttonColors(
+            backgroundColor = Color.LightGray,
+            contentColor = Color.White
+        )
+    }
+
     Button(
-        onClick = { /*TODO*/ },
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
+        onClick = { onClick(category) },
+        colors = buttonColor,
         shape = RoundedCornerShape(40),
         modifier = Modifier.padding(5.dp)
     ) {
@@ -164,7 +178,7 @@ fun MenuCategory(category: String) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MenuDishs(menus: List<Menu>) {
+fun MenuDishes(menus: List<Menu>) {
     LazyColumn {
         items(
             items = menus,
@@ -228,7 +242,8 @@ fun MenuDishs(menus: List<Menu>) {
 @Composable
 fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: List<String>) {
 
-    var searchPhrase by rememberSaveable() { mutableStateOf("") }
+    var searchPhrase by rememberSaveable { mutableStateOf("") }
+    var menuCategorySearch by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -239,7 +254,7 @@ fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: 
     )
     { paddingValues ->
         val padding = paddingValues
-        Column() {
+        Column {
             HeroSection()
             val textFieldColor = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.White,
@@ -271,9 +286,17 @@ fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: 
                     }
                 )
             }
+
+            val onClick = { category: String ->
+                menuCategorySearch = if (menuCategorySearch == category) {
+                    ""
+                } else {
+                    category
+                }
+            }
             LazyRow {
                 items(categories) { category ->
-                    MenuCategory(category)
+                    MenuCategory(category, menuCategorySearch, onClick)
                 }
             }
             Divider(
@@ -281,8 +304,13 @@ fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: 
                 color = Color.Gray,
                 thickness = 1.dp
             )
+            val menuFilterdByCategory: List<Menu> = if (menuCategorySearch.isNotEmpty()) {
+                menus.filter { it.category == menuCategorySearch }
+            } else {
+                menus
+            }
             if (searchPhrase.isNotEmpty()) {
-                MenuDishs(menus.filter {
+                MenuDishes(menuFilterdByCategory.filter {
                     it.title.toLowerCase(Locale.ROOT)
                         .contains(searchPhrase.lowercase())
                             ||
@@ -290,7 +318,7 @@ fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: 
                                 .contains(searchPhrase.lowercase())
                 })
             } else {
-                MenuDishs(menus)
+                MenuDishes(menuFilterdByCategory)
             }
         }
     }
