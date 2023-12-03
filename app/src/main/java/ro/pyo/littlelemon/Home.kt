@@ -45,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +54,8 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
+import java.util.Locale
+
 @Composable
 fun TopAppBar(navController: NavHostController) {
     Box(
@@ -163,71 +164,71 @@ fun MenuCategory(category: String) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun MenuDish(menu: Menu) {
-    Card(
-        contentColor = Color.White, backgroundColor = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-           // .background(Color.White)
-        ,elevation = 5.dp, shape = RoundedCornerShape(12.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .background(Color.White),
-        ) {
-            Column (modifier = Modifier.fillMaxWidth(0.6f)){
-                Text(
+fun MenuDishs(menus: List<Menu>) {
+    LazyColumn {
+        items(
+            items = menus,
+            itemContent = { menu ->
+                Card(
+                    contentColor = Color.White, backgroundColor = Color.White,
                     modifier = Modifier
-                        .padding(top = 0.dp, bottom = 1.dp, start = 0.dp, end = 10.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Start,
-                    color = Color.Black,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    text = menu.title,
-                )
-                Text(
-                    text = menu.description,
-                    color = Color.Gray,
-                    modifier = Modifier
-                        .padding(top = 5.dp, bottom = 5.dp)
                         .fillMaxWidth()
-                )
-                Text(
-                    text = "$ ${menu.price.toDouble()}"
-                    , color = Color.Gray
-                    , fontWeight = FontWeight.Bold
-                )
-            }
-            GlideImage(
-                model = menu.image,
-                contentDescription = "menu image",
-                modifier = Modifier
-                    .padding(start = 8.dp, end = 8.dp)
-                    .fillMaxWidth()
-                    .align(CenterVertically),
-                loading = placeholder(ColorPainter(Color.Red))
-            )
+                        .padding(10.dp)
+                    // .background(Color.White)
+                    , elevation = 5.dp, shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .background(Color.White),
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth(0.6f)) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(top = 0.dp, bottom = 1.dp, start = 0.dp, end = 10.dp)
+                                    .fillMaxWidth(),
+                                textAlign = TextAlign.Start,
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                text = menu.title,
+                            )
+                            Text(
+                                text = menu.description,
+                                color = Color.Gray,
+                                modifier = Modifier
+                                    .padding(top = 5.dp, bottom = 5.dp)
+                                    .fillMaxWidth()
+                            )
+                            Text(
+                                text = "$ ${menu.price.toDouble()}",
+                                color = Color.Gray,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        GlideImage(
+                            model = menu.image,
+                            contentDescription = "menu image",
+                            modifier = Modifier
+                                .padding(start = 8.dp, end = 8.dp)
+                                .fillMaxWidth()
+                                .align(CenterVertically),
+                            loading = placeholder(ColorPainter(Color.Red))
+                        )
 
-        }
+                    }
+                }
+            }
+        )
     }
-    /*
-    Divider(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
-        color = Color.LightGray,
-        thickness = 1.dp
-    )*/
+
 }
 
 @Composable
 fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: List<String>) {
 
-    var search by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(""))
-    }
+    var searchPhrase by rememberSaveable() { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -256,8 +257,8 @@ fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: 
                 .padding(0.dp)
                 .fillMaxWidth()
             Box(Modifier.background(colorResource(id = R.color.primary_1))) {
-                TextField(value = search,
-                    onValueChange = { search = it },
+                TextField(value = searchPhrase,
+                    onValueChange = { searchPhrase = it },
                     modifier = textInputModifier,
                     shape = RoundedCornerShape(12.dp),
                     colors = textFieldColor,
@@ -280,10 +281,16 @@ fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: 
                 color = Color.Gray,
                 thickness = 1.dp
             )
-            LazyColumn {
-                items(menus) { menu ->
-                    MenuDish(menu)
-                }
+            if (searchPhrase.isNotEmpty()) {
+                MenuDishs(menus.filter {
+                    it.title.toLowerCase(Locale.ROOT)
+                        .contains(searchPhrase.lowercase())
+                            ||
+                            it.description.toLowerCase(Locale.ROOT)
+                                .contains(searchPhrase.lowercase())
+                })
+            } else {
+                MenuDishs(menus)
             }
         }
     }
