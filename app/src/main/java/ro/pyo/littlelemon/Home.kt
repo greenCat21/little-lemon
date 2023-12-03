@@ -33,9 +33,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -52,7 +54,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-
+import com.bumptech.glide.integration.compose.placeholder
 @Composable
 fun TopAppBar(navController: NavHostController) {
     Box(
@@ -112,11 +114,11 @@ fun HeroSection() {
                     modifier = Modifier
                         .padding(top = 0.dp, bottom = 1.dp, start = 10.dp, end = 10.dp)
                         .fillMaxWidth(),
-                    text = stringResource(id = R.string.city),
                     fontSize = 24.sp,
                     textAlign = TextAlign.Start,
                     fontFamily = FontFamily(Font(R.font.karla, FontWeight.Bold)),
-                    color = Color.White
+                    color = Color.White,
+                    text = stringResource(id = R.string.city),
                 )
                 Text(
                     modifier = Modifier
@@ -162,43 +164,66 @@ fun MenuCategory(category: String) {
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MenuDish(menu: Menu) {
-    Card {
+    Card(
+        contentColor = Color.White, backgroundColor = Color.White,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+           // .background(Color.White)
+        ,elevation = 5.dp, shape = RoundedCornerShape(12.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(10.dp)
+                .background(Color.White),
         ) {
-            Column {
+            Column (modifier = Modifier.fillMaxWidth(0.6f)){
                 Text(
-                    text = menu.title, fontSize = 18.sp, fontWeight = FontWeight.Bold
+                    modifier = Modifier
+                        .padding(top = 0.dp, bottom = 1.dp, start = 0.dp, end = 10.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Start,
+                    color = Color.Black,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    text = menu.title,
                 )
                 Text(
                     text = menu.description,
                     color = Color.Gray,
                     modifier = Modifier
                         .padding(top = 5.dp, bottom = 5.dp)
-                        .fillMaxWidth(.75f)
+                        .fillMaxWidth()
                 )
                 Text(
-                    text = menu.price, color = Color.Gray, fontWeight = FontWeight.Bold
+                    text = "$ ${menu.price.toDouble()}"
+                    , color = Color.Gray
+                    , fontWeight = FontWeight.Bold
                 )
             }
             GlideImage(
                 model = menu.image,
                 contentDescription = "menu image",
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .fillMaxWidth()
+                    .align(CenterVertically),
+                loading = placeholder(ColorPainter(Color.Red))
             )
 
         }
     }
+    /*
     Divider(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         color = Color.LightGray,
         thickness = 1.dp
-    )
+    )*/
 }
+
 @Composable
-fun HomeScreen(navController: NavHostController,menus:List<Menu>,categories:List<String>) {
+fun HomeScreen(navController: NavHostController, menus: List<Menu>, categories: List<String>) {
 
     var search by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
@@ -267,5 +292,9 @@ fun HomeScreen(navController: NavHostController,menus:List<Menu>,categories:List
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController(), listOf(Menu(1,"titlu", description = "descr","10.0","image","cat1")), listOf("cat1","cat2"))
+    HomeScreen(
+        navController = rememberNavController(),
+        listOf(Menu(1, "titlu", description = "descr", "10", "image", "cat1")),
+        listOf("cat1", "cat2")
+    )
 }
