@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
                     for(menu in menus) {
-                        database.menuDao().insert(MenuNetworkToRoom(menu))
+                        database.menuDao().insert(menu.toMenuItemRoom())
                         Log.d("main activity", "Insert into database ${menu.title}")
                     }
                 }

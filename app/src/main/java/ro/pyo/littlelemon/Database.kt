@@ -23,16 +23,7 @@ data class Menu(
     var category: String,
 )
 
-fun MenuNetworkToRoom(menuNetwork: MenuItemNetwork): Menu {
-    return Menu(
-        id = menuNetwork.id,
-        title = menuNetwork.title,
-        description = menuNetwork.description,
-        price = menuNetwork.price,
-        image = menuNetwork.image,
-        category = menuNetwork.category
-    )
-}
+
 
 @Dao
 interface MenuDao {
