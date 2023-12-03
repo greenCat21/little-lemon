@@ -42,6 +42,9 @@ interface MenuDao {
     @Query("SELECT * FROM menu")
     fun getMenus(): LiveData<List<Menu>>
 
+    @Query("SELECT DISTINCT category from menu")
+    fun getCategory():LiveData<List<String>>
+
 }
 
 @Database(entities = [Menu::class], version = 1, exportSchema = false)

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -105,7 +107,10 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(Home.route) {
-                HomeScreen(navController = navController)
+                val database = MenuDatabase.getDatabase(applicationContext)
+                val menus by database.menuDao().getMenus().observeAsState(emptyList())
+                val category by database.menuDao().getCategory().observeAsState(emptyList())
+                HomeScreen(navController = navController,menus, category)
             }
             composable(Profile.route) {
                 ProfileScreen(

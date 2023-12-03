@@ -2,7 +2,6 @@ package ro.pyo.littlelemon
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -44,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
 fun TopAppBar(navController: NavHostController) {
@@ -138,7 +146,59 @@ fun HeroSection() {
 }
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun MenuCategory(category: String) {
+    Button(
+        onClick = { /*TODO*/ },
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray),
+        shape = RoundedCornerShape(40),
+        modifier = Modifier.padding(5.dp)
+    ) {
+        Text(
+            text = category
+        )
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun MenuDish(menu: Menu) {
+    Card {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Column {
+                Text(
+                    text = menu.title, fontSize = 18.sp, fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = menu.description,
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .padding(top = 5.dp, bottom = 5.dp)
+                        .fillMaxWidth(.75f)
+                )
+                Text(
+                    text = menu.price, color = Color.Gray, fontWeight = FontWeight.Bold
+                )
+            }
+            GlideImage(
+                model = menu.image,
+                contentDescription = "menu image",
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            )
+
+        }
+    }
+    Divider(
+        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+        color = Color.LightGray,
+        thickness = 1.dp
+    )
+}
+@Composable
+fun HomeScreen(navController: NavHostController,menus:List<Menu>,categories:List<String>) {
 
     var search by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(""))
@@ -185,6 +245,21 @@ fun HomeScreen(navController: NavHostController) {
                     }
                 )
             }
+            LazyRow {
+                items(categories) { category ->
+                    MenuCategory(category)
+                }
+            }
+            Divider(
+                modifier = Modifier.padding(8.dp),
+                color = Color.Gray,
+                thickness = 1.dp
+            )
+            LazyColumn {
+                items(menus) { menu ->
+                    MenuDish(menu)
+                }
+            }
         }
     }
 }
@@ -192,5 +267,5 @@ fun HomeScreen(navController: NavHostController) {
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(navController = rememberNavController())
+    HomeScreen(navController = rememberNavController(), listOf(Menu(1,"titlu", description = "descr","10.0","image","cat1")), listOf("cat1","cat2"))
 }
